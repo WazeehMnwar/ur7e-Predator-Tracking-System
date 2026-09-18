@@ -1,0 +1,53 @@
+# Measured UR7e joint angles in radians. START is also the resting camera pose.
+# Order: shoulder_pan_joint, shoulder_lift_joint, elbow_joint,
+#        wrist_1_joint, wrist_2_joint, wrist_3_joint.
+start:
+  - -1.570796326795
+  - -0.872664625997
+  - -1.832595714594
+  - -0.366519142919
+  - 1.570796326795
+  - -1.570796326795
+
+# During a bow, only these joints move. The other joints keep their live
+# positions. After the hold, all six return to the saved pre-bow positions.
+bow:
+  shoulder_lift_joint: -1.326450
+  elbow_joint: -2.460914
+  wrist_1_joint: 0.244346
+
+# Shared motion limits. Camera fields remain for the optional legacy mount
+# calibration tool; posture tracking does not require camera coordinates.
+tracking:
+  camera_link: tool0
+  camera_right: null
+  camera_down: null
+  camera_offset: [0.0, 0.0, 0.0]
+  horizontal_fov_deg: 60.0
+  vertical_fov_deg: 45.0
+  estimated_depth_m: 1.5
+  response_gain: 0.8
+  deadband: 0.02
+  # Pan, lift, elbow, wrist1, wrist2, wrist3: higher cost means less use.
+  joint_cost: [1.0, 1.0, 1.0, 3.0, 8.0, 8.0]
+  wrist_posture_gain: 0.15
+  max_joint_speed: 0.10
+  max_joint_acceleration: 0.20
+  damping: 0.08
+  joint_margin: 0.12
+
+# Four-joint analytic IK. No measured posture table.
+# Radius/height refer to tracking.camera_link origin, NOT an unmodeled camera.
+# null uses the current position after START (no invented Cartesian pose).
+ik:
+  auto_start: true
+  locked_wrists: [1.570796326795, -1.570796326795]  # wrist 2 = 90 deg, wrist 3 = -90 deg
+  radius: null  # meters from base axis; preserve START radius by default
+  height: null  # meters above base_link; preserve START height by default
+  pan_sign: -1   # Reported: increasing pan shifts target RIGHT in the image
+  tilt_sign: -1  # Reported: increasing tilt shifts target DOWN in the image
+  pan_span: 0.7   # radians either side of START; reduce for cable/workspace limits
+  pitch_span: 0.5 # joint-sum radians either side of START
+  gain: 0.12
+  pose_gain: 1.0
+# Reach from bounding-box size remains disabled pending pointing validation.

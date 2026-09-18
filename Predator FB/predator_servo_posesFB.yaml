@@ -1,0 +1,95 @@
+# Measured UR7e joint angles in radians. START is also the resting camera pose.
+# Order: shoulder_pan_joint, shoulder_lift_joint, elbow_joint,
+#        wrist_1_joint, wrist_2_joint, wrist_3_joint.
+start:
+  - -1.570796326795
+  - -0.872664625997
+  - -1.832595714594
+  - -0.366519142919
+  - 1.570796326795
+  - -1.570796326795
+
+# During a bow, only these joints move. The other joints keep their live
+# positions. After the hold, all six return to the saved pre-bow positions.
+bow:
+  shoulder_lift_joint: -1.326450
+  elbow_joint: -2.460914
+  wrist_1_joint: 0.244346
+
+# Shared motion limits. Camera fields remain for the optional legacy mount
+# calibration tool; posture tracking does not require camera coordinates.
+tracking:
+  camera_link: tool0
+  camera_right: null
+  camera_down: null
+  camera_offset: [0.0, 0.0, 0.0]
+  horizontal_fov_deg: 60.0
+  vertical_fov_deg: 45.0
+  estimated_depth_m: 1.5
+  response_gain: 0.8
+  deadband: 0.02
+  # Pan, lift, elbow, wrist1, wrist2, wrist3: higher cost means less use.
+  joint_cost: [1.0, 1.0, 1.0, 3.0, 8.0, 8.0]
+  wrist_posture_gain: 0.15
+  max_joint_speed: 0.15
+  max_joint_acceleration: 0.20
+  damping: 0.08
+  joint_margin: 0.12
+
+# Four-joint analytic IK. No measured posture table.
+# Radius/height refer to tracking.camera_link origin, NOT an unmodeled camera.
+# null uses the current position after START (no invented Cartesian pose).
+ik:
+  auto_start: true
+  locked_wrists: [1.570796326795, -1.570796326795]  # wrist 2 = 90 deg, wrist 3 = -90 deg
+  radius: null  # meters from base axis; preserve START radius by default
+  height: null  # meters above base_link; preserve START height by default
+  pan_sign: -1   # Reported: increasing pan shifts target RIGHT in the image
+  tilt_sign: -1  # Reported: increasing tilt shifts target DOWN in the image
+  pan_span: 0.7   # radians either side of START; reduce for cable/workspace limits
+  pitch_span: 0.5 # joint-sum radians either side of START
+  gain: 0.18
+  pose_gain: 1.5
+  feedforward_gain: 1.0 # follow IK target velocity directly, plus lag correction
+# FB reach is available below; enabled only by --enable-reach.
+
+# Reach OFF unless bridge is launched with --enable-reach.
+# Screenshot FK with wrists [90,-90] degrees:
+# rear [-70,-40,-49,-96,90,-90]: radius .261095, height .918465 m
+# front [-70,-134,9,-52,90,-90]: radius .628725, height .894267 m
+# They have opposite elbow branches. Keep START branch and START height.
+# Rear limit extended to .170 m: about 5 cm of retraction from START (.219725 m).
+reach:
+  metric: shoulder_width
+  target_width: 0.30  # shoulder span / full image width
+  target_height: 0.45
+  deadband: 0.03   # 27%-33% shoulder span holds reach
+  radius_min: 0.170
+  radius_max: 0.628725446010
+  height_min: 0.74
+  height_max: 0.78
+  max_speed: 0.01 # radius target speed cap: 10 mm/s
+  gain: 0.08
+  smoothing_time: 0.5
+  settle_time: 0.7
+  max_box_rate: 0.5 # image-height fraction per second; faster -> settle again
+  box_jump_floor: 0.03 # ignore small detector-size jitter in jump detection
+  center_limit: 0.15
+  center_resume: 0.10 # tighter threshold to start/resume; prevents boundary chatter
+  alignment_time: 1.0 # continuously aligned after stable acquisition
+  resume_time: 0.4    # continuously aligned after a centering pause
+  stale_time: 0.35
+  direction: 1 # assumes increasing radius approaches person; verify on hardware
+
+search:
+  enabled: true
+  edge_threshold: 0.65
+  min_image_speed: 0.08 # normalized image-x units/sec, moving outward
+  coast_time: 0.5
+  coast_speed: 0.045   # rad/s, base only
+  half_span: 0.785398163397 # requested +/-45 deg; clipped to ik.pan_span
+  settle_time: 0.5
+  pause_total: 5.0     # total stationary time per cycle, NOT travel time
+  cycles: 2
+  timeout: 180.0
+  heartbeat_timeout: 1.5 # hold still after 0.35s; cancel after 1.5s without fresh vision
