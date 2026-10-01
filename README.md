@@ -4,6 +4,8 @@
 
 The arm autonomously points at a selected person using a vision pipeline that combines YOLO body tracking, persistent face recognition, hand gesture detection, and a visual servoing controller with forward/back reach control and autonomous lost-target search.
 
+[![Predator Tracking Demo](https://img.youtube.com/vi/Tso7jccfZYE/0.jpg)](https://youtube.com/shorts/Tso7jccfZYE)
+
 ---
 
 ## Built For
