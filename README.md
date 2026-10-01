@@ -1,6 +1,6 @@
 # Predator — UR7e Vision Tracking System
 
-> Built for the **Robotics X Nature Challenge** — a real-time human tracking system for a Universal Robots UR7e arm.
+> Built for the **Robotics X Nature Challenge** for the Ingram Hall Makerspace at Texas State University — a real-time human tracking system for a Universal Robots UR7e arm.
 
 The arm autonomously points at a selected person using a vision pipeline that combines YOLO body tracking, persistent face recognition, hand gesture detection, and a visual servoing controller with forward/back reach control and autonomous lost-target search.
 
