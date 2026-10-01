@@ -1,0 +1,17 @@
+{
+  "person_001": {
+    "role": "known",
+    "embedding": [0.0, 0.0, 0.0],
+    "extra_embeddings": []
+  },
+  "person_002": {
+    "role": "boss",
+    "embedding": [0.0, 0.0, 0.0],
+    "extra_embeddings": []
+  },
+  "person_003": {
+    "role": "target",
+    "embedding": [0.0, 0.0, 0.0],
+    "extra_embeddings": []
+  }
+}

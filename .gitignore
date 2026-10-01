@@ -1,0 +1,30 @@
+# ROS 2 build artifacts
+build/
+install/
+log/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Face identity database — contains real face embeddings, never commit
+predator_face_memory.json
+face_memory.npz
+
+# Large model weights — download separately, don't commit binaries
+models/yolo/*.pt
+models/face/*.onnx
+models/hand/*.task
+
+# Env / IDE
+.env
+.venv
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
